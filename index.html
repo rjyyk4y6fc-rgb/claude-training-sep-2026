@@ -632,6 +632,13 @@
     position: absolute;
     transition: left 0.12s ease, top 0.12s ease;
   }
+  .celebrate-confetti {
+    position: absolute;
+    font-size: 1.4rem;
+    line-height: 1;
+    pointer-events: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
 
   .form-grid {
     display: grid;
@@ -1343,9 +1350,12 @@
   const celebrateCloseBtn = document.getElementById("celebrate-modal-close-btn");
   const celebrateEmojiEl = celebrateBackdrop.querySelector(".celebrate-emoji");
   const celebrateTitleEl = document.getElementById("celebrate-modal-title");
+  const celebrateModalEl = celebrateBackdrop.querySelector(".modal");
   const CELEBRATE_MAX_DODGES = 10;
+  const CELEBRATE_CONFETTI_POOL = ["🎉", "🎊", "🥳", "🎈", "✨", "🍾", "🎆", "🎇", "👏", "🏆"];
   let celebrateTriggerEl = null;
   let celebrateDodgeCount = 0;
+  let celebrateConfettiEls = [];
 
   function resetCelebrateButtonPosition() {
     celebrateDodgeCount = 0;
@@ -1355,6 +1365,8 @@
     [celebrateEmojiEl, celebrateTitleEl, celebrateMessage].forEach((el) => {
       el.style.transform = "";
     });
+    celebrateConfettiEls.forEach((el) => el.remove());
+    celebrateConfettiEls = [];
   }
 
   function randomJitter(intensity) {
@@ -1364,12 +1376,35 @@
     return `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${angle.toFixed(1)}deg)`;
   }
 
+  function spawnCelebrateConfetti() {
+    const modalRect = celebrateModalEl.getBoundingClientRect();
+    const emoji = document.createElement("span");
+    emoji.className = "celebrate-confetti";
+    emoji.setAttribute("aria-hidden", "true");
+    emoji.textContent =
+      CELEBRATE_CONFETTI_POOL[Math.floor(Math.random() * CELEBRATE_CONFETTI_POOL.length)];
+    const angle = (Math.random() - 0.5) * 50;
+    const left = Math.random() * Math.max(0, modalRect.width - 32);
+    const top = Math.random() * Math.max(0, modalRect.height - 32);
+    emoji.style.left = `${left}px`;
+    emoji.style.top = `${top}px`;
+    emoji.style.opacity = "0";
+    emoji.style.transform = `scale(0.3) rotate(${angle.toFixed(1)}deg)`;
+    celebrateModalEl.appendChild(emoji);
+    celebrateConfettiEls.push(emoji);
+    requestAnimationFrame(() => {
+      emoji.style.opacity = "1";
+      emoji.style.transform = `scale(1) rotate(${angle.toFixed(1)}deg)`;
+    });
+  }
+
   function shuffleCelebrateModal() {
     // Grows shakier with each dodge, like the modal is coming apart.
     const intensity = 1 + celebrateDodgeCount * 0.35;
     celebrateEmojiEl.style.transform = randomJitter(intensity);
     celebrateTitleEl.style.transform = randomJitter(intensity * 0.7);
     celebrateMessage.style.transform = randomJitter(intensity * 0.7);
+    spawnCelebrateConfetti();
   }
 
   function dodgeCelebrateButton() {

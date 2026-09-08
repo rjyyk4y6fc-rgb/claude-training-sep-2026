@@ -1,15 +1,15 @@
-# UOB IT PMO Kanban Board (Demo)
+# IT PMO Kanban Board (Demo)
 
-A single-file Kanban board demo for a fictional "UOB IT PMO" (internal IT project
+A single-file Kanban board demo for a fictional "IT PMO" (internal IT project
 management office). This is a **training/demo artifact**, not a production system — it
-deliberately avoids any real UOB branding or trademarks (text wordmark only, a generic
-corporate-blue palette).
+deliberately avoids any real-company branding or trademarks (text wordmark with a
+Japanese subheading, a generic corporate-blue-and-rainbow palette).
 
 ## Live demo
 
 [https://rjyyk4y6fc-rgb.github.io/claude-training-sep-2026/](https://rjyyk4y6fc-rgb.github.io/claude-training-sep-2026/)
 
-![Screenshot of the UOB IT PMO Kanban board](screenshot.png)
+![Screenshot of the IT PMO Kanban board](screenshot.png)
 
 ## Running locally
 

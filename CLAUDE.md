@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`index.html` is a single-file demo web app: a Kanban board for a fictional "UOB IT PMO"
+`index.html` is a single-file demo web app: a Kanban board for a fictional "IT PMO"
 (internal IT project management office). It is a training/demo artifact, not a production
-system — it deliberately avoids any real UOB branding or trademarks (text wordmark only,
-generic corporate-blue palette).
+system — it deliberately avoids any real-company branding or trademarks (text wordmark
+plus a Japanese subheading, generic corporate-blue-and-rainbow palette).
 
 ## Running and developing
 
@@ -54,7 +54,7 @@ card DOM directly.
 Key functions in `index.html`'s `<script>` block:
 
 - `seedTasks()` / `generateTaskId()` — builds the 8 demo tasks on load and issues
-  sequential `UOB-ITPM-####` IDs.
+  sequential `ITPM-####` IDs.
 - `applyFilters(tasks)` — pure filter over the in-memory array (project/assignee/priority).
 - `renderBoard()` → `renderCard(task)` — the only path that writes card HTML; buckets
   filtered tasks into the 4 fixed status columns and updates counts/summary strip.

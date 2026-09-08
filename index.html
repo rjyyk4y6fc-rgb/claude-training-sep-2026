@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>UOB IT PMO — Kanban Board</title>
+<title>IT PMO — Kanban Board</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c3aed'/%3E%3Cstop offset='0.25' stop-color='%230ea5e9'/%3E%3Cstop offset='0.5' stop-color='%2310b981'/%3E%3Cstop offset='0.75' stop-color='%23f97316'/%3E%3Cstop offset='1' stop-color='%23ef4444'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='16' fill='url(%23g)'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23ffffff' font-family='Arial, sans-serif'%3EP%3C/text%3E%3C/svg%3E" />
 <style>
   /* ===================== Design tokens ===================== */
   :root {
-    --uob-blue-900: #0a2c5c;
-    --uob-blue-800: #123b73;
-    --uob-blue-700: #1a4f8f;
-    --uob-blue-600: #2563a8;
-    --uob-blue-500: #3f7cc2;
-    --uob-blue-100: #e5eef8;
-    --uob-blue-050: #f3f7fc;
+    --brand-blue-900: #0a2c5c;
+    --brand-blue-800: #123b73;
+    --brand-blue-700: #1a4f8f;
+    --brand-blue-600: #2563a8;
+    --brand-blue-500: #3f7cc2;
+    --brand-blue-100: #e5eef8;
+    --brand-blue-050: #f3f7fc;
 
     --neutral-900: #1c2430;
     --neutral-700: #45505f;
@@ -34,10 +34,10 @@
     --priority-low: #5c6472;
     --priority-low-bg: #eaecef;
 
-    --priority-critical-wash: color-mix(in srgb, var(--priority-critical) 5%, white);
-    --priority-high-wash: color-mix(in srgb, var(--priority-high) 6%, white);
-    --priority-medium-wash: color-mix(in srgb, var(--priority-medium) 4%, white);
-    --priority-low-wash: color-mix(in srgb, var(--priority-low) 3%, white);
+    --priority-critical-wash: color-mix(in srgb, var(--priority-critical) 14%, white);
+    --priority-high-wash: color-mix(in srgb, var(--priority-high) 16%, white);
+    --priority-medium-wash: color-mix(in srgb, var(--priority-medium) 12%, white);
+    --priority-low-wash: color-mix(in srgb, var(--priority-low) 10%, white);
 
     /* Rainbow palette — used structurally (header, columns, buttons, modal),
        kept separate from the priority palette so the two color systems
@@ -93,9 +93,24 @@
     margin: 0;
     padding: 0;
     font-family: var(--font-stack);
-    background: var(--neutral-050);
+    background:
+      radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--rainbow-violet) 7%, transparent), transparent 32%),
+      radial-gradient(circle at 92% 15%, color-mix(in srgb, var(--rainbow-blue) 7%, transparent), transparent 32%),
+      radial-gradient(circle at 15% 95%, color-mix(in srgb, var(--rainbow-green) 6%, transparent), transparent 32%),
+      radial-gradient(circle at 95% 100%, color-mix(in srgb, var(--rainbow-orange) 6%, transparent), transparent 32%),
+      var(--neutral-050);
+    background-attachment: fixed;
     color: var(--neutral-900);
   }
+
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-track { background: var(--neutral-100); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--rainbow-gradient);
+    border-radius: 999px;
+    border: 2px solid var(--neutral-100);
+  }
+  * { scrollbar-color: var(--rainbow-blue) var(--neutral-100); }
 
   a, button, input, select, textarea {
     font-family: inherit;
@@ -109,7 +124,7 @@
   a:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
-    border-color: var(--uob-blue-600);
+    border-color: var(--brand-blue-600);
   }
 
   /* ===================== Header ===================== */
@@ -123,7 +138,7 @@
         transparent 1px,
         transparent 14px
       ),
-      var(--uob-blue-900);
+      var(--brand-blue-900);
     color: var(--white);
     padding: var(--space-4) var(--space-5);
   }
@@ -160,6 +175,23 @@
     align-items: center;
     gap: var(--space-2);
   }
+  .title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .title-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+  .title-kr {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--brand-blue-100);
+    opacity: 0.75;
+  }
   .logo-mark {
     display: inline-flex;
     align-items: center;
@@ -177,7 +209,7 @@
   .wordmark .subtitle {
     font-size: 0.75rem;
     font-weight: 400;
-    color: var(--uob-blue-100);
+    color: var(--brand-blue-100);
     opacity: 0.85;
     padding-left: var(--space-3);
     border-left: 1px solid rgba(255,255,255,0.28);
@@ -196,10 +228,10 @@
     border: 2px solid transparent;
     background: linear-gradient(var(--white), var(--white)) padding-box,
       var(--rainbow-gradient) border-box;
-    color: var(--uob-blue-900);
+    color: var(--brand-blue-900);
   }
   .btn-primary:hover {
-    background: linear-gradient(var(--uob-blue-100), var(--uob-blue-100)) padding-box,
+    background: linear-gradient(var(--brand-blue-100), var(--brand-blue-100)) padding-box,
       var(--rainbow-gradient) border-box;
   }
 
@@ -212,7 +244,7 @@
 
   .demo-note {
     font-size: 0.75rem;
-    color: var(--uob-blue-100);
+    color: var(--brand-blue-100);
     margin-top: var(--space-2);
     opacity: 0.9;
   }
@@ -286,7 +318,11 @@
     cursor: pointer;
     height: fit-content;
   }
-  .filter-clear:hover { background: var(--neutral-100); }
+  .filter-clear:hover {
+    background: color-mix(in srgb, var(--rainbow-violet) 8%, var(--neutral-100));
+    border-color: color-mix(in srgb, var(--rainbow-violet) 40%, var(--neutral-300));
+    color: var(--rainbow-violet);
+  }
 
   /* ===================== Board ===================== */
   main.board {
@@ -310,7 +346,7 @@
        at this size, so text-bearing surfaces use this deeper mix instead. */
     --column-accent-deep: color-mix(in srgb, var(--column-accent) 65%, black);
     position: relative;
-    background: color-mix(in srgb, var(--column-accent) 5%, var(--neutral-100));
+    background: color-mix(in srgb, var(--column-accent) 10%, var(--neutral-100));
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
@@ -354,7 +390,7 @@
     font-weight: 700;
     letter-spacing: 0.01em;
     margin: 0;
-    color: var(--uob-blue-900);
+    color: var(--brand-blue-900);
   }
   .count-badge {
     background: var(--column-accent-deep);
@@ -381,7 +417,7 @@
     color: var(--neutral-500);
     text-align: center;
     padding: var(--space-4);
-    border: 1px dashed var(--neutral-300);
+    border: 1px dashed color-mix(in srgb, var(--column-accent) 45%, var(--neutral-300));
     border-radius: var(--radius-md);
   }
 
@@ -389,7 +425,7 @@
   .task-card {
     background: var(--white);
     border-radius: var(--radius-md);
-    border: 1px solid var(--neutral-200);
+    border: 1px solid color-mix(in srgb, var(--column-accent) 20%, var(--neutral-200));
     border-left: 6px solid var(--neutral-300);
     padding: var(--space-3);
     display: flex;
@@ -454,18 +490,22 @@
     font-weight: 700;
     padding: 2px 8px;
     border-radius: 999px;
+    border: 1px solid transparent;
   }
-  .pill-critical { color: var(--priority-critical); background: var(--priority-critical-bg); }
-  .pill-high { color: var(--priority-high); background: var(--priority-high-bg); }
-  .pill-medium { color: var(--priority-medium); background: var(--priority-medium-bg); }
-  .pill-low { color: var(--priority-low); background: var(--priority-low-bg); }
+  .pill-critical { color: var(--priority-critical); background: var(--priority-critical-bg); border-color: color-mix(in srgb, var(--priority-critical) 35%, transparent); }
+  .pill-high { color: var(--priority-high); background: var(--priority-high-bg); border-color: color-mix(in srgb, var(--priority-high) 35%, transparent); }
+  .pill-medium { color: var(--priority-medium); background: var(--priority-medium-bg); border-color: color-mix(in srgb, var(--priority-medium) 35%, transparent); }
+  .pill-low { color: var(--priority-low); background: var(--priority-low-bg); border-color: color-mix(in srgb, var(--priority-low) 35%, transparent); }
 
   .tag {
     display: inline-flex;
     align-items: center;
-    font-size: 0.72rem;
-    font-weight: 500;
-    color: var(--neutral-500);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    color: var(--rainbow-violet);
+    background: color-mix(in srgb, var(--rainbow-violet) 12%, white);
   }
 
   .badge-overdue {
@@ -492,7 +532,7 @@
   .move-select {
     font-size: 0.75rem;
     padding: 3px 6px;
-    border: 1px solid var(--neutral-300);
+    border: 1px solid color-mix(in srgb, var(--column-accent) 45%, var(--neutral-300));
     border-radius: var(--radius-sm);
     background: var(--white);
     color: var(--neutral-700);
@@ -560,7 +600,7 @@
   }
   .modal h2 {
     margin-top: 0;
-    color: var(--uob-blue-900);
+    color: var(--brand-blue-900);
     font-size: 1.15rem;
   }
 
@@ -621,7 +661,7 @@
   .btn-outline:hover { background: var(--neutral-100); }
 
   .btn-submit {
-    background: linear-gradient(135deg, var(--uob-blue-700), var(--rainbow-violet));
+    background: linear-gradient(135deg, var(--brand-blue-700), var(--rainbow-violet));
     color: var(--white);
     border: 1px solid transparent;
     border-radius: var(--radius-md);
@@ -630,7 +670,7 @@
     font-weight: 600;
     cursor: pointer;
   }
-  .btn-submit:hover { background: linear-gradient(135deg, var(--uob-blue-800), #6d28d9); }
+  .btn-submit:hover { background: linear-gradient(135deg, var(--brand-blue-800), #6d28d9); }
   .btn-submit:disabled {
     background: var(--neutral-300);
     border-color: var(--neutral-300);
@@ -680,8 +720,13 @@
   <div class="header-top">
     <div class="wordmark">
       <span class="logo-mark" aria-hidden="true">P</span>
-      UOB IT PMO
-      <span class="subtitle">Project &amp; Task Board (Demo)</span>
+      <div class="title-group">
+        <div class="title-row">
+          <span class="title-en">IT PMO</span>
+          <span class="subtitle">Project &amp; Task Board (Demo)</span>
+        </div>
+        <div class="title-kr" lang="ko">IT 프로젝트 관리 오피스</div>
+      </div>
     </div>
     <button type="button" class="btn btn-primary" id="open-add-task-btn">+ Add Task</button>
   </div>
@@ -956,7 +1001,7 @@
   }
 
   function generateTaskId() {
-    const id = "UOB-ITPM-" + String(state.nextIdCounter).padStart(4, "0");
+    const id = "ITPM-" + String(state.nextIdCounter).padStart(4, "0");
     state.nextIdCounter += 1;
     return id;
   }
@@ -1189,7 +1234,7 @@
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          _subject: `[UOB IT PMO] New task ${task.id}: ${task.title}`,
+          _subject: `[IT PMO] New task ${task.id}: ${task.title}`,
           _template: "table",
           _captcha: "false",
           "Task ID": task.id,

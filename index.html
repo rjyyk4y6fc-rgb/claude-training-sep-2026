@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>UOB IT PMO — Kanban Board</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%230a2c5c'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23ffffff' font-family='Arial, sans-serif'%3EP%3C/text%3E%3C/svg%3E" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c3aed'/%3E%3Cstop offset='0.25' stop-color='%230ea5e9'/%3E%3Cstop offset='0.5' stop-color='%2310b981'/%3E%3Cstop offset='0.75' stop-color='%23f97316'/%3E%3Cstop offset='1' stop-color='%23ef4444'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='16' fill='url(%23g)'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23ffffff' font-family='Arial, sans-serif'%3EP%3C/text%3E%3C/svg%3E" />
 <style>
   /* ===================== Design tokens ===================== */
   :root {
@@ -38,6 +38,32 @@
     --priority-high-wash: color-mix(in srgb, var(--priority-high) 6%, white);
     --priority-medium-wash: color-mix(in srgb, var(--priority-medium) 4%, white);
     --priority-low-wash: color-mix(in srgb, var(--priority-low) 3%, white);
+
+    /* Rainbow palette — used structurally (header, columns, buttons, modal),
+       kept separate from the priority palette so the two color systems
+       don't compete for meaning on the same element. */
+    --rainbow-violet: #7c3aed;
+    --rainbow-blue: #0ea5e9;
+    --rainbow-green: #10b981;
+    --rainbow-gold: #f5b700;
+    --rainbow-orange: #f97316;
+    --rainbow-red: #ef4444;
+    --rainbow-gradient: linear-gradient(
+      90deg,
+      var(--rainbow-violet),
+      var(--rainbow-blue),
+      var(--rainbow-green),
+      var(--rainbow-gold),
+      var(--rainbow-orange),
+      var(--rainbow-red)
+    );
+
+    /* One rainbow hue per column — violet through the spectrum, keeping
+       Blocked in the warm/warning zone and Done in green (success). */
+    --column-backlog: var(--rainbow-violet);
+    --column-progress: var(--rainbow-blue);
+    --column-blocked: var(--rainbow-orange);
+    --column-done: var(--rainbow-green);
 
     --danger: #c0392b;
     --danger-bg: #fbe6e3;
@@ -101,14 +127,21 @@
     color: var(--white);
     padding: var(--space-4) var(--space-5);
   }
+  header.app-header::before,
   header.app-header::after {
     content: "";
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
+    background: var(--rainbow-gradient);
+  }
+  header.app-header::before {
+    top: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--uob-blue-700), var(--uob-blue-500) 50%, var(--uob-blue-700));
+  }
+  header.app-header::after {
+    bottom: 0;
+    height: 4px;
   }
 
   .header-top {
@@ -124,8 +157,22 @@
     font-weight: 700;
     letter-spacing: 0.02em;
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: var(--space-2);
+  }
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm);
+    background: var(--rainbow-gradient);
+    background-size: 200% 100%;
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 800;
   }
   .wordmark .subtitle {
     font-size: 0.75rem;
@@ -146,10 +193,15 @@
     transition: background-color 0.15s ease, border-color 0.15s ease;
   }
   .btn-primary {
-    background: var(--white);
+    border: 2px solid transparent;
+    background: linear-gradient(var(--white), var(--white)) padding-box,
+      var(--rainbow-gradient) border-box;
     color: var(--uob-blue-900);
   }
-  .btn-primary:hover { background: var(--uob-blue-100); }
+  .btn-primary:hover {
+    background: linear-gradient(var(--uob-blue-100), var(--uob-blue-100)) padding-box,
+      var(--rainbow-gradient) border-box;
+  }
 
   .btn-secondary {
     background: transparent;
@@ -252,7 +304,13 @@
   }
 
   section.column {
-    background: var(--neutral-100);
+    --column-accent: var(--neutral-300);
+    /* Darkened variant for white-on-color text (count badge) — the raw
+       accent hues (sky blue, emerald, orange) don't hit 4.5:1 with white
+       at this size, so text-bearing surfaces use this deeper mix instead. */
+    --column-accent-deep: color-mix(in srgb, var(--column-accent) 65%, black);
+    position: relative;
+    background: color-mix(in srgb, var(--column-accent) 5%, var(--neutral-100));
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
@@ -260,9 +318,25 @@
     border: 2px solid transparent;
     transition: background-color 0.15s ease, border-color 0.15s ease;
   }
+  section.column[data-status="Backlog"] { --column-accent: var(--column-backlog); }
+  section.column[data-status="In Progress"] { --column-accent: var(--column-progress); }
+  section.column[data-status="Blocked"] { --column-accent: var(--column-blocked); }
+  section.column[data-status="Done"] { --column-accent: var(--column-done); }
+
+  section.column::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
+    background: var(--column-accent);
+  }
   section.column.drag-over {
-    border-color: var(--uob-blue-500);
-    background: var(--uob-blue-050);
+    border-color: var(--column-accent);
+    background: color-mix(in srgb, var(--column-accent) 12%, var(--neutral-050));
   }
 
   .column-header {
@@ -270,7 +344,10 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--space-3) var(--space-4);
-    border-bottom: 1px solid var(--neutral-200);
+    border-bottom: 1px solid color-mix(in srgb, var(--column-accent) 25%, var(--neutral-200));
+    background: color-mix(in srgb, var(--column-accent) 8%, transparent);
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
   }
   .column-header h2 {
     font-size: 1.05rem;
@@ -280,7 +357,7 @@
     color: var(--uob-blue-900);
   }
   .count-badge {
-    background: var(--uob-blue-700);
+    background: var(--column-accent-deep);
     color: var(--white);
     font-size: 0.75rem;
     font-weight: 700;
@@ -462,12 +539,24 @@
   .modal-backdrop[hidden] { display: none; }
 
   .modal {
+    position: relative;
     background: var(--white);
     border-radius: var(--radius-lg);
     width: 100%;
     max-width: 560px;
     padding: var(--space-5);
     box-shadow: 0 12px 40px rgba(10,20,40,0.3);
+  }
+  .modal::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
+    background: var(--rainbow-gradient);
   }
   .modal h2 {
     margin-top: 0;
@@ -532,16 +621,16 @@
   .btn-outline:hover { background: var(--neutral-100); }
 
   .btn-submit {
-    background: var(--uob-blue-700);
+    background: linear-gradient(135deg, var(--uob-blue-700), var(--rainbow-violet));
     color: var(--white);
-    border: 1px solid var(--uob-blue-700);
+    border: 1px solid transparent;
     border-radius: var(--radius-md);
     padding: var(--space-2) var(--space-4);
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
   }
-  .btn-submit:hover { background: var(--uob-blue-800); }
+  .btn-submit:hover { background: linear-gradient(135deg, var(--uob-blue-800), #6d28d9); }
   .btn-submit:disabled {
     background: var(--neutral-300);
     border-color: var(--neutral-300);
@@ -590,6 +679,7 @@
 <header class="app-header">
   <div class="header-top">
     <div class="wordmark">
+      <span class="logo-mark" aria-hidden="true">P</span>
       UOB IT PMO
       <span class="subtitle">Project &amp; Task Board (Demo)</span>
     </div>

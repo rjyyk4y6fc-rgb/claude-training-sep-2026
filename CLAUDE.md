@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 `index.html` is a single-file demo web app: a Kanban board for a fictional "IT PMO"
 (internal IT project management office). It is a training/demo artifact, not a production
 system — it deliberately avoids any real-company branding or trademarks (text wordmark
-plus a Japanese subheading, generic corporate-blue-and-rainbow palette).
+plus a Korean subheading, generic corporate-blue-and-rainbow palette).
 
 ## Running and developing
 

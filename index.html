@@ -34,6 +34,11 @@
     --priority-low: #5c6472;
     --priority-low-bg: #eaecef;
 
+    --priority-critical-wash: color-mix(in srgb, var(--priority-critical) 5%, white);
+    --priority-high-wash: color-mix(in srgb, var(--priority-high) 6%, white);
+    --priority-medium-wash: color-mix(in srgb, var(--priority-medium) 4%, white);
+    --priority-low-wash: color-mix(in srgb, var(--priority-low) 3%, white);
+
     --danger: #c0392b;
     --danger-bg: #fbe6e3;
     --success: #1f7a4d;
@@ -83,9 +88,27 @@
 
   /* ===================== Header ===================== */
   header.app-header {
-    background: var(--uob-blue-900);
+    position: relative;
+    background:
+      repeating-linear-gradient(
+        135deg,
+        rgba(255,255,255,0.035) 0px,
+        rgba(255,255,255,0.035) 1px,
+        transparent 1px,
+        transparent 14px
+      ),
+      var(--uob-blue-900);
     color: var(--white);
     padding: var(--space-4) var(--space-5);
+  }
+  header.app-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--uob-blue-700), var(--uob-blue-500) 50%, var(--uob-blue-700));
   }
 
   .header-top {
@@ -109,6 +132,8 @@
     font-weight: 400;
     color: var(--uob-blue-100);
     opacity: 0.85;
+    padding-left: var(--space-3);
+    border-left: 1px solid rgba(255,255,255,0.28);
   }
 
   .btn {
@@ -161,8 +186,12 @@
     font-size: 1rem;
   }
   .summary-chip.overdue {
-    background: rgba(192, 57, 43, 0.25);
-    border-color: rgba(192, 57, 43, 0.5);
+    background: rgba(192, 57, 43, 0.3);
+    border: 1.5px solid rgba(230, 126, 110, 0.75);
+    font-weight: 600;
+  }
+  .summary-chip.overdue strong {
+    font-size: 1.1rem;
   }
 
   /* ===================== Filter bar ===================== */
@@ -244,7 +273,9 @@
     border-bottom: 1px solid var(--neutral-200);
   }
   .column-header h2 {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
     margin: 0;
     color: var(--uob-blue-900);
   }
@@ -282,21 +313,20 @@
     background: var(--white);
     border-radius: var(--radius-md);
     border: 1px solid var(--neutral-200);
-    border-left: 4px solid var(--neutral-300);
+    border-left: 6px solid var(--neutral-300);
     padding: var(--space-3);
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
     cursor: grab;
-    box-shadow: 0 1px 2px rgba(20,30,50,0.06);
   }
   .task-card:active { cursor: grabbing; }
   .task-card.dragging { opacity: 0.5; }
 
-  .task-card.priority-critical { border-left-color: var(--priority-critical); }
-  .task-card.priority-high { border-left-color: var(--priority-high); }
-  .task-card.priority-medium { border-left-color: var(--priority-medium); }
-  .task-card.priority-low { border-left-color: var(--priority-low); }
+  .task-card.priority-critical { border-left-color: var(--priority-critical); background: var(--priority-critical-wash); }
+  .task-card.priority-high { border-left-color: var(--priority-high); background: var(--priority-high-wash); }
+  .task-card.priority-medium { border-left-color: var(--priority-medium); background: var(--priority-medium-wash); }
+  .task-card.priority-low { border-left-color: var(--priority-low); background: var(--priority-low-wash); }
 
   .card-top-row {
     display: flex;
@@ -305,13 +335,14 @@
     gap: var(--space-2);
   }
   .task-id {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 700;
     color: var(--neutral-500);
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
   }
   .task-title {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--neutral-900);
     margin: 2px 0 0 0;
@@ -354,23 +385,22 @@
 
   .tag {
     display: inline-flex;
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: var(--radius-sm);
-    background: var(--uob-blue-100);
-    color: var(--uob-blue-800);
+    align-items: center;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--neutral-500);
   }
 
   .badge-overdue {
     display: inline-flex;
     align-items: center;
     gap: 3px;
-    font-size: 0.7rem;
-    font-weight: 700;
+    font-size: 0.72rem;
+    font-weight: 800;
     color: var(--danger);
     background: var(--danger-bg);
-    padding: 2px 8px;
+    border: 1px solid var(--danger);
+    padding: 2px 9px;
     border-radius: var(--radius-sm);
   }
 

@@ -606,7 +606,9 @@
 
   .celebrate-modal {
     max-width: 400px;
+    min-height: 300px;
     text-align: center;
+    overflow: hidden;
   }
   .celebrate-emoji {
     font-size: 2.75rem;
@@ -620,6 +622,10 @@
   }
   .celebrate-modal .modal-actions {
     justify-content: center;
+  }
+  #celebrate-modal-close-btn.celebrate-dodging {
+    position: absolute;
+    transition: left 0.12s ease, top 0.12s ease;
   }
 
   .form-grid {
@@ -1330,11 +1336,37 @@
   const celebrateBackdrop = document.getElementById("celebrate-modal-backdrop");
   const celebrateMessage = document.getElementById("celebrate-modal-message");
   const celebrateCloseBtn = document.getElementById("celebrate-modal-close-btn");
+  const CELEBRATE_MAX_DODGES = 6;
   let celebrateTriggerEl = null;
+  let celebrateDodgeCount = 0;
+
+  function resetCelebrateButtonPosition() {
+    celebrateDodgeCount = 0;
+    celebrateCloseBtn.classList.remove("celebrate-dodging");
+    celebrateCloseBtn.style.left = "";
+    celebrateCloseBtn.style.top = "";
+  }
+
+  function dodgeCelebrateButton() {
+    if (celebrateDodgeCount >= CELEBRATE_MAX_DODGES) return;
+    celebrateDodgeCount++;
+    const modalEl = celebrateCloseBtn.closest(".modal");
+    const modalRect = modalEl.getBoundingClientRect();
+    const btnRect = celebrateCloseBtn.getBoundingClientRect();
+    const padding = 16;
+    const maxLeft = Math.max(padding, modalRect.width - btnRect.width - padding);
+    const maxTop = Math.max(padding, modalRect.height - btnRect.height - padding);
+    const left = padding + Math.random() * (maxLeft - padding);
+    const top = padding + Math.random() * (maxTop - padding);
+    celebrateCloseBtn.classList.add("celebrate-dodging");
+    celebrateCloseBtn.style.left = `${left}px`;
+    celebrateCloseBtn.style.top = `${top}px`;
+  }
 
   function openCelebrateModal(task) {
     celebrateTriggerEl = document.activeElement;
     celebrateMessage.textContent = `"${task.title}" (${task.id}) is done — nice work!`;
+    resetCelebrateButtonPosition();
     celebrateBackdrop.hidden = false;
     celebrateCloseBtn.focus();
     document.addEventListener("keydown", onCelebrateModalKeydown);
@@ -1342,6 +1374,7 @@
 
   function closeCelebrateModal() {
     celebrateBackdrop.hidden = true;
+    resetCelebrateButtonPosition();
     document.removeEventListener("keydown", onCelebrateModalKeydown);
     if (celebrateTriggerEl && document.body.contains(celebrateTriggerEl)) {
       celebrateTriggerEl.focus();
@@ -1352,6 +1385,7 @@
     if (e.key === "Escape") closeCelebrateModal();
   }
 
+  celebrateCloseBtn.addEventListener("mouseenter", dodgeCelebrateButton);
   celebrateCloseBtn.addEventListener("click", closeCelebrateModal);
   celebrateBackdrop.addEventListener("click", (e) => {
     if (e.target === celebrateBackdrop) closeCelebrateModal();

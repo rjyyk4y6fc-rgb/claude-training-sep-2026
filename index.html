@@ -639,6 +639,11 @@
     pointer-events: none;
     transition: transform 0.2s ease, opacity 0.2s ease;
   }
+  .celebrate-modal.celebrate-modal-roaming {
+    position: fixed;
+    margin: 0;
+    transition: left 0.18s ease, top 0.18s ease, transform 0.18s ease;
+  }
 
   .form-grid {
     display: grid;
@@ -1362,6 +1367,10 @@
     celebrateCloseBtn.classList.remove("celebrate-dodging");
     celebrateCloseBtn.style.left = "";
     celebrateCloseBtn.style.top = "";
+    celebrateModalEl.classList.remove("celebrate-modal-roaming");
+    celebrateModalEl.style.left = "";
+    celebrateModalEl.style.top = "";
+    celebrateModalEl.style.transform = "";
     [celebrateEmojiEl, celebrateTitleEl, celebrateMessage].forEach((el) => {
       el.style.transform = "";
     });
@@ -1398,12 +1407,27 @@
     });
   }
 
+  function moveCelebrateModal() {
+    const rect = celebrateModalEl.getBoundingClientRect();
+    const padding = 16;
+    const maxLeft = Math.max(padding, window.innerWidth - rect.width - padding);
+    const maxTop = Math.max(padding, window.innerHeight - rect.height - padding);
+    const left = padding + Math.random() * (maxLeft - padding);
+    const top = padding + Math.random() * (maxTop - padding);
+    const wobble = (Math.random() - 0.5) * (4 + celebrateDodgeCount * 1.5);
+    celebrateModalEl.classList.add("celebrate-modal-roaming");
+    celebrateModalEl.style.left = `${left}px`;
+    celebrateModalEl.style.top = `${top}px`;
+    celebrateModalEl.style.transform = `rotate(${wobble.toFixed(1)}deg)`;
+  }
+
   function shuffleCelebrateModal() {
     // Grows shakier with each dodge, like the modal is coming apart.
-    const intensity = 1 + celebrateDodgeCount * 0.35;
+    const intensity = 1 + celebrateDodgeCount * 0.4;
     celebrateEmojiEl.style.transform = randomJitter(intensity);
     celebrateTitleEl.style.transform = randomJitter(intensity * 0.7);
     celebrateMessage.style.transform = randomJitter(intensity * 0.7);
+    moveCelebrateModal();
     spawnCelebrateConfetti();
   }
 

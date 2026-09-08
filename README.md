@@ -9,6 +9,8 @@ corporate-blue palette).
 
 [https://rjyyk4y6fc-rgb.github.io/claude-training-sep-2026/](https://rjyyk4y6fc-rgb.github.io/claude-training-sep-2026/)
 
+![Screenshot of the UOB IT PMO Kanban board](screenshot.png)
+
 ## Running locally
 
 There's no build step, package manager, or server. Everything — HTML, CSS, and

@@ -604,6 +604,24 @@
     font-size: 1.15rem;
   }
 
+  .celebrate-modal {
+    max-width: 400px;
+    text-align: center;
+  }
+  .celebrate-emoji {
+    font-size: 2.75rem;
+    line-height: 1;
+    margin-bottom: var(--space-2);
+  }
+  .celebrate-modal h2 { text-align: center; }
+  .celebrate-message {
+    color: var(--neutral-700);
+    font-size: 0.95rem;
+  }
+  .celebrate-modal .modal-actions {
+    justify-content: center;
+  }
+
   .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -870,6 +888,18 @@
         <button type="submit" class="btn-submit" id="submit-add-task-btn">Add Task</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- ===================== Task complete modal ===================== -->
+<div class="modal-backdrop" id="celebrate-modal-backdrop" hidden>
+  <div class="modal celebrate-modal" role="dialog" aria-modal="true" aria-labelledby="celebrate-modal-title">
+    <div class="celebrate-emoji" aria-hidden="true">🎉</div>
+    <h2 id="celebrate-modal-title">Congratulations!</h2>
+    <p class="celebrate-message" id="celebrate-modal-message"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn-submit" id="celebrate-modal-close-btn">Nice!</button>
+    </div>
   </div>
 </div>
 
@@ -1147,8 +1177,12 @@
   function moveTask(taskId, newStatus) {
     const task = state.tasks.find((t) => t.id === taskId);
     if (!task || !STATUSES.includes(newStatus)) return;
+    const wasDone = task.status === "Done";
     task.status = newStatus;
     renderBoard();
+    if (newStatus === "Done" && !wasDone) {
+      openCelebrateModal(task);
+    }
   }
 
   function deleteTask(taskId) {
@@ -1288,6 +1322,39 @@
   cancelBtn.addEventListener("click", closeModal);
   backdrop.addEventListener("click", (e) => {
     if (e.target === backdrop) closeModal();
+  });
+
+  // =====================================================================
+  // Task complete celebration modal
+  // =====================================================================
+  const celebrateBackdrop = document.getElementById("celebrate-modal-backdrop");
+  const celebrateMessage = document.getElementById("celebrate-modal-message");
+  const celebrateCloseBtn = document.getElementById("celebrate-modal-close-btn");
+  let celebrateTriggerEl = null;
+
+  function openCelebrateModal(task) {
+    celebrateTriggerEl = document.activeElement;
+    celebrateMessage.textContent = `"${task.title}" (${task.id}) is done — nice work!`;
+    celebrateBackdrop.hidden = false;
+    celebrateCloseBtn.focus();
+    document.addEventListener("keydown", onCelebrateModalKeydown);
+  }
+
+  function closeCelebrateModal() {
+    celebrateBackdrop.hidden = true;
+    document.removeEventListener("keydown", onCelebrateModalKeydown);
+    if (celebrateTriggerEl && document.body.contains(celebrateTriggerEl)) {
+      celebrateTriggerEl.focus();
+    }
+  }
+
+  function onCelebrateModalKeydown(e) {
+    if (e.key === "Escape") closeCelebrateModal();
+  }
+
+  celebrateCloseBtn.addEventListener("click", closeCelebrateModal);
+  celebrateBackdrop.addEventListener("click", (e) => {
+    if (e.target === celebrateBackdrop) closeCelebrateModal();
   });
 
   form.addEventListener("submit", async (e) => {

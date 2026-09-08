@@ -614,11 +614,16 @@
     font-size: 2.75rem;
     line-height: 1;
     margin-bottom: var(--space-2);
+    transition: transform 0.15s ease;
   }
-  .celebrate-modal h2 { text-align: center; }
+  .celebrate-modal h2 {
+    text-align: center;
+    transition: transform 0.15s ease;
+  }
   .celebrate-message {
     color: var(--neutral-700);
     font-size: 0.95rem;
+    transition: transform 0.15s ease;
   }
   .celebrate-modal .modal-actions {
     justify-content: center;
@@ -1336,7 +1341,9 @@
   const celebrateBackdrop = document.getElementById("celebrate-modal-backdrop");
   const celebrateMessage = document.getElementById("celebrate-modal-message");
   const celebrateCloseBtn = document.getElementById("celebrate-modal-close-btn");
-  const CELEBRATE_MAX_DODGES = 6;
+  const celebrateEmojiEl = celebrateBackdrop.querySelector(".celebrate-emoji");
+  const celebrateTitleEl = document.getElementById("celebrate-modal-title");
+  const CELEBRATE_MAX_DODGES = 10;
   let celebrateTriggerEl = null;
   let celebrateDodgeCount = 0;
 
@@ -1345,6 +1352,24 @@
     celebrateCloseBtn.classList.remove("celebrate-dodging");
     celebrateCloseBtn.style.left = "";
     celebrateCloseBtn.style.top = "";
+    [celebrateEmojiEl, celebrateTitleEl, celebrateMessage].forEach((el) => {
+      el.style.transform = "";
+    });
+  }
+
+  function randomJitter(intensity) {
+    const x = (Math.random() - 0.5) * intensity * 12;
+    const y = (Math.random() - 0.5) * intensity * 8;
+    const angle = (Math.random() - 0.5) * intensity * 8;
+    return `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${angle.toFixed(1)}deg)`;
+  }
+
+  function shuffleCelebrateModal() {
+    // Grows shakier with each dodge, like the modal is coming apart.
+    const intensity = 1 + celebrateDodgeCount * 0.35;
+    celebrateEmojiEl.style.transform = randomJitter(intensity);
+    celebrateTitleEl.style.transform = randomJitter(intensity * 0.7);
+    celebrateMessage.style.transform = randomJitter(intensity * 0.7);
   }
 
   function dodgeCelebrateButton() {
@@ -1361,6 +1386,7 @@
     celebrateCloseBtn.classList.add("celebrate-dodging");
     celebrateCloseBtn.style.left = `${left}px`;
     celebrateCloseBtn.style.top = `${top}px`;
+    shuffleCelebrateModal();
   }
 
   function openCelebrateModal(task) {
